@@ -4,12 +4,14 @@ ThoughtDrop is a production-ready serverless backend that sends daily automated 
 
 ## 🎯 Features
 
-- **Morning Thought (6 AM):** Positive, energetic, fresh start.
-- **Evening Thought (6 PM):** Calm, reflective, gratitude.
-- **AI-Powered:** Uses DeepSeek API to generate unique Hinglish thoughts.
-- **No Duplicates:** Stores previous thoughts in Turso (SQLite) to ensure variety.
-- **Serverless:** Hosted on Vercel with automated cron jobs.
-- **Email Delivery:** Sent via Brevo SMTP.
+- **🔥 Daily Streak System:** Tracks continuous days of quotes sent.
+- **🧠 Smart Categories:** Randomly picks between Motivation, Discipline, Calm, and Focus.
+- **🌅 Personalized Greetings:** "Good Morning Aryan" & "Hope your evening is peaceful Aryan".
+- **🛡️ Security Hardening:** Cron-only access guard for API endpoints.
+- **📊 Analytics Endpoint:** `GET /api/stats` for real-time streak and delivery data.
+- **🛠️ Fail-safe System:** 3x AI retries with a curated fallback system.
+- **🎭 AI Personality:** DeepSeek acts as a "wise mentor" for more soulful thoughts.
+- **⏰ IST Scheduling:** Optimized for 6 AM and 6 PM IST.
 
 ## 🧠 Tech Stack
 

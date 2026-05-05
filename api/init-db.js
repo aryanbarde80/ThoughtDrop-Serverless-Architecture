@@ -7,8 +7,23 @@ export default async function handler(req, res) {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         text TEXT UNIQUE,
         type TEXT,
+        category TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
+    `);
+
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS stats (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        streak INTEGER DEFAULT 0,
+        last_sent_date DATE,
+        total_sent INTEGER DEFAULT 0
+      )
+    `);
+
+    // Initialize stats if not exists
+    await client.execute(`
+      INSERT OR IGNORE INTO stats (id, streak, total_sent) VALUES (1, 0, 0)
     `);
     
     if (res && typeof res.status === 'function') {
