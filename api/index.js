@@ -42,7 +42,10 @@ export default function handler(req, res) {
                 </div>
             </div>
 
-            <div class="pt-8 space-x-4">
+            <div class="pt-8 flex flex-wrap justify-center gap-4">
+                <button onclick="triggerTest()" id="testBtn" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-8 py-3 rounded-full transition-all">
+                    🚀 Trigger Test
+                </button>
                 <a href="/api/stats" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-full transition-all">
                     View My Stats
                 </a>
@@ -50,6 +53,39 @@ export default function handler(req, res) {
                     GitHub Repo
                 </a>
             </div>
+
+            <div id="status" class="hidden text-sm font-mono p-4 rounded-xl bg-slate-900 border border-slate-800 max-w-md mx-auto"></div>
+
+            <script>
+                async function triggerTest() {
+                    const btn = document.getElementById('testBtn');
+                    const status = document.getElementById('status');
+                    
+                    btn.disabled = true;
+                    btn.innerText = 'Sending...';
+                    status.classList.remove('hidden');
+                    status.innerText = '⏳ Generating thought and sending email...';
+                    status.className = 'text-sm font-mono p-4 rounded-xl bg-slate-900 border border-slate-800 max-w-md mx-auto text-slate-400';
+
+                    try {
+                        const res = await fetch('/api/send-quote?type=morning&test=true');
+                        const data = await res.json();
+                        
+                        if (data.success) {
+                            status.innerText = '✅ Success! Check your email Aryan.';
+                            status.className = 'text-sm font-mono p-4 rounded-xl bg-emerald-900/20 border border-emerald-800/50 max-w-md mx-auto text-emerald-400';
+                        } else {
+                            throw new Error(data.error || 'Failed to send');
+                        }
+                    } catch (err) {
+                        status.innerText = '❌ Error: ' + err.message;
+                        status.className = 'text-sm font-mono p-4 rounded-xl bg-rose-900/20 border border-rose-800/50 max-w-md mx-auto text-rose-400';
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerText = '🚀 Trigger Test';
+                    }
+                }
+            </script>
 
             <footer class="pt-12 text-slate-600 text-sm">
                 Built with Node.js, Vercel, Turso, DeepSeek & Brevo.

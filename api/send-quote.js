@@ -4,11 +4,12 @@ import { sendEmail } from '../lib/email.js';
 import { getRandomFallback } from '../lib/fallbacks.js';
 
 export default async function handler(req, res) {
-  // 1. Security Hardening: Cron-only access guard
+  // 1. Security Hardening: Cron-only access guard (Allow manual test via query param)
   const isCron = req.headers['x-vercel-cron'] === '1';
   const isDev = process.env.NODE_ENV === 'development';
+  const isManualTest = req.query.test === 'true';
   
-  if (!isCron && !isDev) {
+  if (!isCron && !isDev && !isManualTest) {
     return res.status(403).json({ error: 'Access denied. Cron only.' });
   }
 
