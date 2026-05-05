@@ -1,6 +1,8 @@
 # ThoughtDrop 🌅🌙
 
-ThoughtDrop is a production-ready serverless backend that sends daily automated Hinglish thoughts to your email.
+ThoughtDrop is a production-ready serverless backend that sends daily automated Hinglish thoughts to your email. It features a gamified streak system, smart AI categorization, and a beautiful landing page.
+
+[**View Architecture Diagram**](./ARCHITECTURE.md) | [**Live Stats API**](/api/stats)
 
 ## 🎯 Features
 
