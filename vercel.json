@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/send-quote?type=morning",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/send-quote?type=evening",
+      "schedule": "0 18 * * *"
+    }
+  ]
+}

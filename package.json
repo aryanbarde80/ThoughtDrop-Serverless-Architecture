@@ -1,0 +1,15 @@
+{
+  "name": "thoughtdrop",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node api/send-quote.js",
+    "init-db": "node api/init-db.js"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0",
+    "dotenv": "^16.4.5",
+    "nodemailer": "^8.0.7",
+    "openai": "^4.28.0"
+  }
+}
