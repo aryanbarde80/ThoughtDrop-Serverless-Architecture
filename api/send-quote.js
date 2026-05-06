@@ -20,11 +20,16 @@ export default async function handler(req, res) {
 
   try {
     // 2. Fetch last 20 quotes for context
-    const lastQuotesResult = await client.execute({
-      sql: 'SELECT text FROM quotes ORDER BY created_at DESC LIMIT 20',
-      args: []
-    });
-    const previousQuotes = lastQuotesResult.rows.map(row => row.text);
+    let previousQuotes = [];
+    try {
+      const lastQuotesResult = await client.execute({
+        sql: 'SELECT text FROM quotes ORDER BY created_at DESC LIMIT 20',
+        args: []
+      });
+      previousQuotes = lastQuotesResult.rows.map(row => row.text);
+    } catch (dbError) {
+      console.warn('Could not fetch previous quotes:', dbError.message);
+    }
 
     let thoughtData;
     let thought;
@@ -62,14 +67,20 @@ export default async function handler(req, res) {
     }
 
     // 5. Personalization
+    const userName = process.env.USER_NAME || 'Aryan';
     const personalizedThought = type === 'morning' 
-      ? `Good Morning Aryan 🌅\n\n${thought}`
-      : `Hope your evening is peaceful Aryan 🌙\n\n${thought}`;
+      ? `Good Morning ${userName} 🌅\n\n${thought}`
+      : `Hope your evening is peaceful ${userName} 🌙\n\n${thought}`;
 
     // 6. Update Stats & Streak
     const today = new Date().toISOString().split('T')[0];
     const statsResult = await client.execute('SELECT * FROM stats WHERE id = 1');
     const stats = statsResult.rows[0];
+    
+    if (!stats) {
+      console.error('Stats row not found. Please run init-db first.');
+      return res.status(500).json({ error: 'Database not initialized. Run init-db.' });
+    }
     
     let newStreak = stats.streak;
     const lastDate = stats.last_sent_date;
@@ -101,16 +112,25 @@ export default async function handler(req, res) {
     ], 'write');
 
     // 8. Send Email
-    await sendEmail(type, personalizedThought);
+    try {
+      await sendEmail(type, personalizedThought);
+    } catch (emailError) {
+      console.error('Email delivery failed, but quote was saved:', emailError.message);
+      // Don't fail the entire request if email fails
+    }
 
     return res.status(200).json({ 
       success: true, 
       streak: newStreak,
-      thought: personalizedThought 
+      thought: personalizedThought,
+      timestamp: new Date().toISOString()
     });
 
   } catch (error) {
-    console.error('Critical error in send-quote:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Critical error in send-quote:', error.message || error);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message || 'Unknown error'
+    });
   }
 }
