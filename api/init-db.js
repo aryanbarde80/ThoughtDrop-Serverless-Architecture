@@ -21,25 +21,23 @@ export default async function handler(req, res) {
       )
     `);
 
-    // Initialize stats if not exists
+    // Initialize stats row if not exists
     await client.execute(`
       INSERT OR IGNORE INTO stats (id, streak, total_sent) VALUES (1, 0, 0)
     `);
-    
-    if (res && typeof res.status === 'function') {
-      return res.status(200).json({ message: 'Database initialized successfully' });
-    } else {
-      console.log('Database initialized successfully');
-    }
-  } catch (error) {
-    console.error('Database initialization failed:', error);
-    if (res && typeof res.status === 'function') {
-      return res.status(500).json({ error: 'Database initialization failed', details: error.message });
-    }
-  }
-}
 
-// Allow running directly via node
-if (import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {
-  handler().then(() => process.exit(0)).catch(() => process.exit(1));
+    console.log('✅ Database initialized successfully');
+
+    return res.status(200).json({ 
+      success: true,
+      message: 'Database initialized successfully. Tables: quotes, stats.' 
+    });
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error);
+    return res.status(500).json({ 
+      success: false,
+      error: 'Database initialization failed', 
+      details: error.message 
+    });
+  }
 }

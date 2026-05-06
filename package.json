@@ -1,10 +1,14 @@
 {
   "name": "thoughtdrop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "start": "node api/send-quote.js",
-    "init-db": "node api/init-db.js"
+    "dev": "NODE_ENV=development node --experimental-vm-modules api/send-quote.js",
+    "init-db": "node -e \"import('./api/init-db.js').then(m => m.default({query:{}}, {status:()=>({json:console.log})}))\"",
+    "start": "vercel dev"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
